@@ -1,0 +1,181 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section class="hero-section py-5" style="background-color: #e6f2ff;">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h1 class="display-4 fw-bold mb-4">Connect with Healthcare Professionals</h1>
+                <p class="lead mb-4">MedConnect helps patients find the right doctors and enables healthcare professionals to manage their practice more efficiently.</p>
+                <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+                    <a href="{% url 'search_doctors' %}" class="btn btn-primary btn-lg px-4 me-md-2">Find a Doctor</a>
+                    {% if not user.is_authenticated %}
+                        <a href="{% url 'signup' %}" class="btn btn-outline-secondary btn-lg px-4">Sign Up</a>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-lg-6 mt-5 mt-lg-0">
+                <!-- SVG illustration -->
+                <svg viewBox="0 0 500 400" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="50" y="50" width="400" height="300" rx="20" fill="#ffffff" stroke="#007bff" stroke-width="2"/>
+                    <circle cx="250" cy="120" r="50" fill="#007bff"/>
+                    <path d="M250 180 C 150 180 150 300 250 300 C 350 300 350 180 250 180" fill="#f8f9fa" stroke="#007bff" stroke-width="2"/>
+                    <rect x="225" y="100" width="50" height="10" fill="#ffffff"/>
+                    <rect x="245" y="80" width="10" height="50" fill="#ffffff"/>
+                    <path d="M170 250 C 170 220 200 220 200 250 L 200 280 C 200 310 170 310 170 280 Z" fill="#007bff"/>
+                    <path d="M300 250 C 300 220 330 220 330 250 L 330 280 C 330 310 300 310 300 280 Z" fill="#007bff"/>
+                </svg>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="features-section py-5">
+    <div class="container">
+        <h2 class="text-center mb-5">Why Choose MedConnect?</h2>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <div class="feature-icon mb-3">
+                            <i class="fas fa-search fa-3x text-primary"></i>
+                        </div>
+                        <h3 class="card-title h5">Find the Right Doctor</h3>
+                        <p class="card-text">Search for healthcare professionals by specialty, location, or name to find the perfect match for your medical needs.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <div class="feature-icon mb-3">
+                            <i class="fas fa-calendar-check fa-3x text-primary"></i>
+                        </div>
+                        <h3 class="card-title h5">Easy Appointment Booking</h3>
+                        <p class="card-text">Book appointments with your preferred healthcare professionals at your convenience with our simple scheduling system.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <div class="feature-icon mb-3">
+                            <i class="fas fa-comments fa-3x text-primary"></i>
+                        </div>
+                        <h3 class="card-title h5">Secure Messaging</h3>
+                        <p class="card-text">Communicate directly with your doctor through our secure messaging platform for follow-ups and quick questions.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="specialties-section py-5" style="background-color: #f8f9fa;">
+    <div class="container">
+        <h2 class="text-center mb-5">Find Doctors by Specialty</h2>
+        <div class="row g-4">
+            <div class="col-6 col-md-4 col-lg-3">
+                <a href="{% url 'search_doctors' %}?specialty=1" class="text-decoration-none">
+                    <div class="card text-center h-100">
+                        <div class="card-body">
+                            <i class="fas fa-heart fa-3x text-danger mb-3"></i>
+                            <h3 class="h6">Cardiology</h3>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-6 col-md-4 col-lg-3">
+                <a href="{% url 'search_doctors' %}?specialty=2" class="text-decoration-none">
+                    <div class="card text-center h-100">
+                        <div class="card-body">
+                            <i class="fas fa-brain fa-3x text-info mb-3"></i>
+                            <h3 class="h6">Neurology</h3>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-6 col-md-4 col-lg-3">
+                <a href="{% url 'search_doctors' %}?specialty=3" class="text-decoration-none">
+                    <div class="card text-center h-100">
+                        <div class="card-body">
+                            <i class="fas fa-bone fa-3x text-secondary mb-3"></i>
+                            <h3 class="h6">Orthopedics</h3>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-6 col-md-4 col-lg-3">
+                <a href="{% url 'search_doctors' %}?specialty=4" class="text-decoration-none">
+                    <div class="card text-center h-100">
+                        <div class="card-body">
+                            <i class="fas fa-eye fa-3x text-primary mb-3"></i>
+                            <h3 class="h6">Ophthalmology</h3>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-6 col-md-4 col-lg-3">
+                <a href="{% url 'search_doctors' %}?specialty=5" class="text-decoration-none">
+                    <div class="card text-center h-100">
+                        <div class="card-body">
+                            <i class="fas fa-child fa-3x text-success mb-3"></i>
+                            <h3 class="h6">Pediatrics</h3>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-6 col-md-4 col-lg-3">
+                <a href="{% url 'search_doctors' %}?specialty=6" class="text-decoration-none">
+                    <div class="card text-center h-100">
+                        <div class="card-body">
+                            <i class="fas fa-venus fa-3x text-danger mb-3"></i>
+                            <h3 class="h6">Gynecology</h3>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-6 col-md-4 col-lg-3">
+                <a href="{% url 'search_doctors' %}?specialty=7" class="text-decoration-none">
+                    <div class="card text-center h-100">
+                        <div class="card-body">
+                            <i class="fas fa-tooth fa-3x text-warning mb-3"></i>
+                            <h3 class="h6">Dentistry</h3>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-6 col-md-4 col-lg-3">
+                <a href="{% url 'search_doctors' %}" class="text-decoration-none">
+                    <div class="card text-center h-100">
+                        <div class="card-body">
+                            <i class="fas fa-plus-circle fa-3x text-primary mb-3"></i>
+                            <h3 class="h6">View All</h3>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="cta-section py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 offset-lg-2">
+                <div class="card bg-primary text-white">
+                    <div class="card-body text-center p-5">
+                        <h2 class="mb-4">Ready to Connect with Healthcare Professionals?</h2>
+                        <p class="lead mb-4">Join MedConnect today to find the right doctor, book appointments, and take control of your healthcare journey.</p>
+                        {% if user.is_authenticated %}
+                            <a href="{% url 'search_doctors' %}" class="btn btn-light btn-lg">Find a Doctor Now</a>
+                        {% else %}
+                            <a href="{% url 'signup' %}" class="btn btn-light btn-lg">Sign Up for Free</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

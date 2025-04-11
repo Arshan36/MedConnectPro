@@ -1,0 +1,194 @@
+{% extends 'base.html' %}
+
+{% block title %}My Appointments | MedConnect{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h3 class="mb-0">My Appointments</h3>
+                    <div>
+                        {% if user.is_patient %}
+                            <a href="{% url 'search_doctors' %}" class="btn btn-light btn-sm">
+                                <i class="fas fa-search me-1"></i> Find a Doctor
+                            </a>
+                        {% endif %}
+                        <a href="{% url 'dashboard' %}" class="btn btn-light btn-sm ms-2">
+                            <i class="fas fa-arrow-left me-1"></i> Back to Dashboard
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body p-4">
+                    <ul class="nav nav-tabs mb-4" id="appointmentTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="upcoming-tab" data-bs-toggle="tab" data-bs-target="#upcoming" type="button" role="tab" aria-controls="upcoming" aria-selected="true">Upcoming</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="past-tab" data-bs-toggle="tab" data-bs-target="#past" type="button" role="tab" aria-controls="past" aria-selected="false">Past</button>
+                        </li>
+                    </ul>
+                    
+                    <div class="tab-content" id="appointmentTabsContent">
+                        <div class="tab-pane fade show active" id="upcoming" role="tabpanel" aria-labelledby="upcoming-tab">
+                            <div class="d-flex justify-content-end mb-3">
+                                <select id="status-filter" class="form-select form-select-sm" style="width: auto;">
+                                    <option value="all">All Statuses</option>
+                                    <option value="pending">Pending</option>
+                                    <option value="confirmed">Confirmed</option>
+                                    <option value="canceled">Canceled</option>
+                                </select>
+                            </div>
+                            
+                            {% if upcoming_appointments %}
+                                <div class="list-group">
+                                    {% for appointment in upcoming_appointments %}
+                                        <div class="list-group-item list-group-item-action appointment-item" data-status="{{ appointment.status }}">
+                                            <div class="row align-items-center">
+                                                <div class="col-md-3">
+                                                    <h6 class="mb-1">
+                                                        {% if user.is_doctor %}
+                                                            {{ appointment.patient.user.first_name }} {{ appointment.patient.user.last_name }}
+                                                        {% else %}
+                                                            Dr. {{ appointment.doctor.user.last_name }}
+                                                        {% endif %}
+                                                    </h6>
+                                                    <span class="badge bg-{{ appointment.get_status_badge_class }}">{{ appointment.get_status_display }}</span>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <p class="mb-1">
+                                                        <i class="fas fa-calendar-day me-1"></i> {{ appointment.appointment_date|date:"l, F j, Y" }}
+                                                    </p>
+                                                    <p class="mb-0">
+                                                        <i class="fas fa-clock me-1"></i> {{ appointment.start_time|time:"g:i A" }} - {{ appointment.end_time|time:"g:i A" }}
+                                                    </p>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    {% if user.is_doctor %}
+                                                        {% if appointment.reason %}
+                                                            <p class="mb-0">
+                                                                <i class="fas fa-comment-medical me-1"></i> {{ appointment.reason|truncatechars:50 }}
+                                                            </p>
+                                                        {% endif %}
+                                                    {% else %}
+                                                        {% if appointment.doctor.specialty %}
+                                                            <p class="mb-0">
+                                                                <i class="fas fa-stethoscope me-1"></i> {{ appointment.doctor.specialty.name }}
+                                                            </p>
+                                                        {% endif %}
+                                                    {% endif %}
+                                                </div>
+                                                <div class="col-md-2 text-end">
+                                                    <div class="btn-group btn-group-sm">
+                                                        <a href="{% url 'appointment_detail' appointment.id %}" class="btn btn-outline-primary" title="View Details">
+                                                            <i class="fas fa-eye"></i>
+                                                        </a>
+                                                        
+                                                        {% if appointment.status == 'pending' and user.is_doctor %}
+                                                            <a href="{% url 'confirm_appointment' appointment.id %}" class="btn btn-outline-success" title="Confirm">
+                                                                <i class="fas fa-check"></i>
+                                                            </a>
+                                                        {% endif %}
+                                                        
+                                                        {% if appointment.can_cancel %}
+                                                            <a href="{% url 'cancel_appointment' appointment.id %}" class="btn btn-outline-danger" title="Cancel">
+                                                                <i class="fas fa-times"></i>
+                                                            </a>
+                                                        {% endif %}
+                                                        
+                                                        {% if appointment.status == 'confirmed' and user.is_doctor %}
+                                                            <a href="{% url 'complete_appointment' appointment.id %}" class="btn btn-outline-primary" title="Mark as Completed">
+                                                                <i class="fas fa-check-double"></i>
+                                                            </a>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <div class="text-center py-5">
+                                    <div class="mb-4">
+                                        <i class="fas fa-calendar-check fa-5x text-muted"></i>
+                                    </div>
+                                    <h4>No Upcoming Appointments</h4>
+                                    <p class="text-muted mb-4">You don't have any upcoming appointments scheduled.</p>
+                                    {% if user.is_patient %}
+                                        <a href="{% url 'search_doctors' %}" class="btn btn-primary">Find a Doctor</a>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="tab-pane fade" id="past" role="tabpanel" aria-labelledby="past-tab">
+                            {% if past_appointments %}
+                                <div class="list-group">
+                                    {% for appointment in past_appointments %}
+                                        <div class="list-group-item list-group-item-action">
+                                            <div class="row align-items-center">
+                                                <div class="col-md-3">
+                                                    <h6 class="mb-1">
+                                                        {% if user.is_doctor %}
+                                                            {{ appointment.patient.user.first_name }} {{ appointment.patient.user.last_name }}
+                                                        {% else %}
+                                                            Dr. {{ appointment.doctor.user.last_name }}
+                                                        {% endif %}
+                                                    </h6>
+                                                    <span class="badge bg-{{ appointment.get_status_badge_class }}">{{ appointment.get_status_display }}</span>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <p class="mb-1">
+                                                        <i class="fas fa-calendar-day me-1"></i> {{ appointment.appointment_date|date:"l, F j, Y" }}
+                                                    </p>
+                                                    <p class="mb-0">
+                                                        <i class="fas fa-clock me-1"></i> {{ appointment.start_time|time:"g:i A" }} - {{ appointment.end_time|time:"g:i A" }}
+                                                    </p>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    {% if user.is_doctor %}
+                                                        {% if appointment.reason %}
+                                                            <p class="mb-0">
+                                                                <i class="fas fa-comment-medical me-1"></i> {{ appointment.reason|truncatechars:50 }}
+                                                            </p>
+                                                        {% endif %}
+                                                    {% else %}
+                                                        {% if appointment.doctor.specialty %}
+                                                            <p class="mb-0">
+                                                                <i class="fas fa-stethoscope me-1"></i> {{ appointment.doctor.specialty.name }}
+                                                            </p>
+                                                        {% endif %}
+                                                    {% endif %}
+                                                </div>
+                                                <div class="col-md-2 text-end">
+                                                    <a href="{% url 'appointment_detail' appointment.id %}" class="btn btn-sm btn-outline-primary">
+                                                        <i class="fas fa-eye me-1"></i> View
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <div class="text-center py-5">
+                                    <div class="mb-4">
+                                        <i class="fas fa-history fa-5x text-muted"></i>
+                                    </div>
+                                    <h4>No Past Appointments</h4>
+                                    <p class="text-muted">You don't have any past appointment records.</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script src="/static/js/appointments.js"></script>
+{% endblock %}
+
+{% endblock %}

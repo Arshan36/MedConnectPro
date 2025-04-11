@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+
+{% block title %}Dr. {{ doctor.user.last_name }} | MedConnect{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-4 mb-4">
+            <div class="card shadow">
+                <div class="card-body text-center p-4">
+                    {% if doctor.profile_picture %}
+                        <img src="{{ doctor.profile_picture.url }}" alt="Dr. {{ doctor.user.first_name }} {{ doctor.user.last_name }}" class="rounded-circle img-thumbnail mb-3" style="width: 150px; height: 150px; object-fit: cover;">
+                    {% else %}
+                        <div class="rounded-circle bg-light d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 150px; height: 150px;">
+                            <i class="fas fa-user-md fa-4x text-secondary"></i>
+                        </div>
+                    {% endif %}
+                    
+                    <h2 class="h4 mb-1">Dr. {{ doctor.user.first_name }} {{ doctor.user.last_name }}</h2>
+                    {% if doctor.specialty %}
+                        <div class="specialty-badge mb-3">{{ doctor.specialty.name }}</div>
+                    {% endif %}
+                    <p class="text-muted mb-3">{{ doctor.years_of_experience }} years of experience</p>
+                    
+                    {% if user.is_authenticated and user.is_patient %}
+                        <div class="d-grid gap-2">
+                            <a href="{% url 'book_appointment' doctor.id %}" class="btn btn-primary">Book Appointment</a>
+                            <a href="{% url 'start_conversation' 'doctor' doctor.id %}" class="btn btn-outline-primary">Send Message</a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="card shadow mt-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Contact Information</h5>
+                </div>
+                <div class="card-body">
+                    {% if doctor.clinic_address %}
+                        <div class="d-flex mb-3">
+                            <i class="fas fa-map-marker-alt text-primary me-3 mt-1"></i>
+                            <div>
+                                <h6 class="mb-1">Clinic Address</h6>
+                                <p class="mb-0">{{ doctor.get_full_address }}</p>
+                            </div>
+                        </div>
+                    {% endif %}
+                    
+                    {% if doctor.phone_number %}
+                        <div class="d-flex mb-3">
+                            <i class="fas fa-phone text-primary me-3 mt-1"></i>
+                            <div>
+                                <h6 class="mb-1">Phone</h6>
+                                <p class="mb-0">{{ doctor.phone_number }}</p>
+                            </div>
+                        </div>
+                    {% endif %}
+                    
+                    <div class="d-flex">
+                        <i class="fas fa-envelope text-primary me-3 mt-1"></i>
+                        <div>
+                            <h6 class="mb-1">Email</h6>
+                            <p class="mb-0">{{ doctor.user.email }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-8">
+            <div class="card shadow mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">About Dr. {{ doctor.user.last_name }}</h5>
+                </div>
+                <div class="card-body">
+                    {% if doctor.bio %}
+                        <p>{{ doctor.bio }}</p>
+                    {% else %}
+                        <p class="text-muted">No bio available.</p>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="card shadow mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Qualifications</h5>
+                </div>
+                <div class="card-body">
+                    {% if doctor.qualifications %}
+                        <p>{{ doctor.qualifications|linebreaks }}</p>
+                    {% else %}
+                        <p class="text-muted">No qualifications listed.</p>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="card shadow">
+                <div class="card-header">
+                    <h5 class="mb-0">Availability</h5>
+                </div>
+                <div class="card-body">
+                    {% if availability %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Day</th>
+                                        <th>Hours</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for slot in availability %}
+                                        <tr>
+                                            <td>{{ slot.get_day_of_week_display }}</td>
+                                            <td>{{ slot.start_time|time:"g:i A" }} - {{ slot.end_time|time:"g:i A" }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        {% if doctor.consultation_fee > 0 %}
+                            <div class="alert alert-info mt-3">
+                                <i class="fas fa-info-circle me-2"></i> Consultation fee: ${{ doctor.consultation_fee }}
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        <p class="text-muted">No availability information provided.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
