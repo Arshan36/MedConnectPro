@@ -1,0 +1,191 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Doctor Profile | MedConnect{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">Edit Your Doctor Profile</h3>
+                </div>
+                <div class="card-body p-4">
+                    <form method="post" enctype="multipart/form-data" novalidate>
+                        {% csrf_token %}
+                        
+                        <div class="row mb-4">
+                            <div class="col-md-3">
+                                <div class="text-center mb-3">
+                                    {% if request.user.doctor_profile.profile_picture %}
+                                        <img src="{{ request.user.doctor_profile.profile_picture.url }}" alt="Profile Picture" class="rounded-circle img-thumbnail" id="profile-picture-preview" style="width: 150px; height: 150px; object-fit: cover;">
+                                    {% else %}
+                                        <div class="rounded-circle bg-light d-flex align-items-center justify-content-center mx-auto" id="profile-picture-placeholder" style="width: 150px; height: 150px;">
+                                            <i class="fas fa-user-md fa-4x text-secondary"></i>
+                                        </div>
+                                        <img src="" alt="Profile Picture" class="rounded-circle img-thumbnail d-none" id="profile-picture-preview" style="width: 150px; height: 150px; object-fit: cover;">
+                                    {% endif %}
+                                </div>
+                                <div class="mb-3">
+                                    <label for="{{ form.profile_picture.id_for_label }}" class="form-label">Profile Picture</label>
+                                    {{ form.profile_picture }}
+                                    {% if form.profile_picture.errors %}
+                                        <div class="text-danger small mt-1">
+                                            {{ form.profile_picture.errors }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-9">
+                                <h4 class="mb-3">Professional Information</h4>
+                                
+                                <div class="mb-3">
+                                    <label for="{{ form.specialty.id_for_label }}" class="form-label">Specialty*</label>
+                                    {{ form.specialty }}
+                                    {% if form.specialty.errors %}
+                                        <div class="text-danger small mt-1">
+                                            {{ form.specialty.errors }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="{{ form.years_of_experience.id_for_label }}" class="form-label">Years of Experience*</label>
+                                    {{ form.years_of_experience }}
+                                    {% if form.years_of_experience.errors %}
+                                        <div class="text-danger small mt-1">
+                                            {{ form.years_of_experience.errors }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="{{ form.qualifications.id_for_label }}" class="form-label">Qualifications*</label>
+                                    {{ form.qualifications }}
+                                    <div class="form-text">List your degrees, certifications, and other professional qualifications.</div>
+                                    {% if form.qualifications.errors %}
+                                        <div class="text-danger small mt-1">
+                                            {{ form.qualifications.errors }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="{{ form.bio.id_for_label }}" class="form-label">Professional Bio*</label>
+                                    {{ form.bio }}
+                                    <div class="form-text">Describe your professional background, approach to patient care, and specializations.</div>
+                                    {% if form.bio.errors %}
+                                        <div class="text-danger small mt-1">
+                                            {{ form.bio.errors }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="{{ form.consultation_fee.id_for_label }}" class="form-label">Consultation Fee ($)</label>
+                                    {{ form.consultation_fee }}
+                                    {% if form.consultation_fee.errors %}
+                                        <div class="text-danger small mt-1">
+                                            {{ form.consultation_fee.errors }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <h4 class="mb-3">Contact Information</h4>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.phone_number.id_for_label }}" class="form-label">Phone Number*</label>
+                                {{ form.phone_number }}
+                                {% if form.phone_number.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {{ form.phone_number.errors }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.clinic_address.id_for_label }}" class="form-label">Clinic Address*</label>
+                            {{ form.clinic_address }}
+                            {% if form.clinic_address.errors %}
+                                <div class="text-danger small mt-1">
+                                    {{ form.clinic_address.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label for="{{ form.clinic_city.id_for_label }}" class="form-label">City*</label>
+                                {{ form.clinic_city }}
+                                {% if form.clinic_city.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {{ form.clinic_city.errors }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-4 mb-3">
+                                <label for="{{ form.clinic_state.id_for_label }}" class="form-label">State/Province*</label>
+                                {{ form.clinic_state }}
+                                {% if form.clinic_state.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {{ form.clinic_state.errors }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-4 mb-3">
+                                <label for="{{ form.clinic_zip.id_for_label }}" class="form-label">ZIP/Postal Code*</label>
+                                {{ form.clinic_zip }}
+                                {% if form.clinic_zip.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {{ form.clinic_zip.errors }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i> 
+                            You can manage your availability schedule separately on the <a href="{% url 'manage_availability' %}">Manage Availability</a> page.
+                        </div>
+                        
+                        <div class="text-center mt-4">
+                            <a href="{% url 'doctor_dashboard' %}" class="btn btn-secondary me-2">Cancel</a>
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+    // Preview profile picture before upload
+    document.getElementById('id_profile_picture').addEventListener('change', function() {
+        const placeholder = document.getElementById('profile-picture-placeholder');
+        const preview = document.getElementById('profile-picture-preview');
+        
+        if (this.files && this.files[0]) {
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                if (placeholder) placeholder.classList.add('d-none');
+                preview.classList.remove('d-none');
+                preview.src = e.target.result;
+            }
+            
+            reader.readAsDataURL(this.files[0]);
+        }
+    });
+</script>
+{% endblock %}
+
+{% endblock %}

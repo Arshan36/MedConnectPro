@@ -1,0 +1,228 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Patient Profile | MedConnect{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <h3 class="mb-0">Edit Your Patient Profile</h3>
+                </div>
+                <div class="card-body p-4">
+                    <form method="post" enctype="multipart/form-data" novalidate>
+                        {% csrf_token %}
+                        
+                        <div class="row mb-4">
+                            <div class="col-md-3">
+                                <div class="text-center mb-3">
+                                    {% if request.user.patient_profile.profile_picture %}
+                                        <img src="{{ request.user.patient_profile.profile_picture.url }}" alt="Profile Picture" class="rounded-circle img-thumbnail" id="profile-picture-preview" style="width: 150px; height: 150px; object-fit: cover;">
+                                    {% else %}
+                                        <div class="rounded-circle bg-light d-flex align-items-center justify-content-center mx-auto" id="profile-picture-placeholder" style="width: 150px; height: 150px;">
+                                            <i class="fas fa-user fa-4x text-secondary"></i>
+                                        </div>
+                                        <img src="" alt="Profile Picture" class="rounded-circle img-thumbnail d-none" id="profile-picture-preview" style="width: 150px; height: 150px; object-fit: cover;">
+                                    {% endif %}
+                                </div>
+                                <div class="mb-3">
+                                    <label for="{{ form.profile_picture.id_for_label }}" class="form-label">Profile Picture</label>
+                                    {{ form.profile_picture }}
+                                    {% if form.profile_picture.errors %}
+                                        <div class="text-danger small mt-1">
+                                            {{ form.profile_picture.errors }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-9">
+                                <h4 class="mb-3">Personal Information</h4>
+                                
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="{{ form.date_of_birth.id_for_label }}" class="form-label">Date of Birth*</label>
+                                        {{ form.date_of_birth }}
+                                        {% if form.date_of_birth.errors %}
+                                            <div class="text-danger small mt-1">
+                                                {{ form.date_of_birth.errors }}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <div class="col-md-6 mb-3">
+                                        <label for="{{ form.gender.id_for_label }}" class="form-label">Gender*</label>
+                                        {{ form.gender }}
+                                        {% if form.gender.errors %}
+                                            <div class="text-danger small mt-1">
+                                                {{ form.gender.errors }}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="{{ form.phone_number.id_for_label }}" class="form-label">Phone Number*</label>
+                                    {{ form.phone_number }}
+                                    {% if form.phone_number.errors %}
+                                        <div class="text-danger small mt-1">
+                                            {{ form.phone_number.errors }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <h4 class="mb-3">Address Information</h4>
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.address.id_for_label }}" class="form-label">Address*</label>
+                            {{ form.address }}
+                            {% if form.address.errors %}
+                                <div class="text-danger small mt-1">
+                                    {{ form.address.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label for="{{ form.city.id_for_label }}" class="form-label">City*</label>
+                                {{ form.city }}
+                                {% if form.city.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {{ form.city.errors }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-4 mb-3">
+                                <label for="{{ form.state.id_for_label }}" class="form-label">State/Province*</label>
+                                {{ form.state }}
+                                {% if form.state.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {{ form.state.errors }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-4 mb-3">
+                                <label for="{{ form.zip_code.id_for_label }}" class="form-label">ZIP/Postal Code*</label>
+                                {{ form.zip_code }}
+                                {% if form.zip_code.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {{ form.zip_code.errors }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <h4 class="mb-3">Emergency Contact</h4>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.emergency_contact_name.id_for_label }}" class="form-label">Emergency Contact Name</label>
+                                {{ form.emergency_contact_name }}
+                                {% if form.emergency_contact_name.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {{ form.emergency_contact_name.errors }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.emergency_contact_phone.id_for_label }}" class="form-label">Emergency Contact Phone</label>
+                                {{ form.emergency_contact_phone }}
+                                {% if form.emergency_contact_phone.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {{ form.emergency_contact_phone.errors }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <h4 class="mb-3">Medical Information</h4>
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.blood_type.id_for_label }}" class="form-label">Blood Type</label>
+                            {{ form.blood_type }}
+                            {% if form.blood_type.errors %}
+                                <div class="text-danger small mt-1">
+                                    {{ form.blood_type.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.allergies.id_for_label }}" class="form-label">Allergies</label>
+                            {{ form.allergies }}
+                            <div class="form-text">List any allergies to medications, foods, or other substances.</div>
+                            {% if form.allergies.errors %}
+                                <div class="text-danger small mt-1">
+                                    {{ form.allergies.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.chronic_conditions.id_for_label }}" class="form-label">Chronic Conditions</label>
+                            {{ form.chronic_conditions }}
+                            <div class="form-text">List any chronic medical conditions you have been diagnosed with.</div>
+                            {% if form.chronic_conditions.errors %}
+                                <div class="text-danger small mt-1">
+                                    {{ form.chronic_conditions.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.current_medications.id_for_label }}" class="form-label">Current Medications</label>
+                            {{ form.current_medications }}
+                            <div class="form-text">List any medications you are currently taking, including dosage if possible.</div>
+                            {% if form.current_medications.errors %}
+                                <div class="text-danger small mt-1">
+                                    {{ form.current_medications.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i> 
+                            You can upload medical documents separately on the <a href="{% url 'medical_documents' %}">Medical Documents</a> page.
+                        </div>
+                        
+                        <div class="text-center mt-4">
+                            <a href="{% url 'patient_dashboard' %}" class="btn btn-secondary me-2">Cancel</a>
+                            <button type="submit" class="btn btn-success">Save Changes</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+    // Preview profile picture before upload
+    document.getElementById('id_profile_picture').addEventListener('change', function() {
+        const placeholder = document.getElementById('profile-picture-placeholder');
+        const preview = document.getElementById('profile-picture-preview');
+        
+        if (this.files && this.files[0]) {
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                if (placeholder) placeholder.classList.add('d-none');
+                preview.classList.remove('d-none');
+                preview.src = e.target.result;
+            }
+            
+            reader.readAsDataURL(this.files[0]);
+        }
+    });
+</script>
+{% endblock %}
+
+{% endblock %}

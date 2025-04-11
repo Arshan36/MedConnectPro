@@ -1,0 +1,184 @@
+{% extends 'base.html' %}
+
+{% block title %}Doctor Dashboard | MedConnect{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h1>Welcome, Dr. {{ request.user.last_name }}</h1>
+            <p class="lead">Manage your profile, appointments, and patient communications.</p>
+        </div>
+        <div class="col-md-4 text-md-end">
+            <a href="{% url 'edit_doctor_profile' %}" class="btn btn-outline-primary me-2">
+                <i class="fas fa-user-edit"></i> Edit Profile
+            </a>
+            <a href="{% url 'manage_availability' %}" class="btn btn-outline-primary">
+                <i class="fas fa-calendar-alt"></i> Manage Availability
+            </a>
+        </div>
+    </div>
+    
+    {% if not profile_complete %}
+        <div class="alert alert-warning mb-4">
+            <i class="fas fa-exclamation-circle me-2"></i> 
+            Your profile is incomplete. Please <a href="{% url 'edit_doctor_profile' %}">complete your profile</a> to be visible to patients.
+        </div>
+    {% endif %}
+    
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card stat-card h-100">
+                <div class="card-body">
+                    <div class="stat-icon">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <div class="stat-value">{{ upcoming_appointments|length }}</div>
+                    <div class="stat-label">Upcoming Appointments</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card stat-card h-100">
+                <div class="card-body">
+                    <div class="stat-icon">
+                        <i class="fas fa-hourglass-half"></i>
+                    </div>
+                    <div class="stat-value">{{ pending_appointments|length }}</div>
+                    <div class="stat-label">Pending Requests</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card stat-card h-100">
+                <div class="card-body">
+                    <div class="stat-icon">
+                        <i class="fas fa-user-injured"></i>
+                    </div>
+                    <div class="stat-value">{{ doctor.appointments.count }}</div>
+                    <div class="stat-label">Total Patients Seen</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-lg-7">
+            <div class="card shadow mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Pending Appointment Requests</h5>
+                    <a href="{% url 'appointment_list' %}" class="btn btn-sm btn-outline-primary">View All</a>
+                </div>
+                <div class="card-body">
+                    {% if pending_appointments %}
+                        <div class="list-group">
+                            {% for appointment in pending_appointments %}
+                                <div class="list-group-item list-group-item-action">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h6 class="mb-1">{{ appointment.patient.user.first_name }} {{ appointment.patient.user.last_name }}</h6>
+                                        <small>{{ appointment.created_at|date:"M d, Y" }}</small>
+                                    </div>
+                                    <p class="mb-1">
+                                        <i class="fas fa-calendar me-1"></i> {{ appointment.appointment_date|date:"l, F j" }} at {{ appointment.start_time|time:"g:i A" }}
+                                    </p>
+                                    <p class="mb-1">
+                                        <i class="fas fa-comment me-1"></i> {{ appointment.reason|truncatechars:50 }}
+                                    </p>
+                                    <div class="mt-2">
+                                        <a href="{% url 'confirm_appointment' appointment.id %}" class="btn btn-sm btn-success">Confirm</a>
+                                        <a href="{% url 'cancel_appointment' appointment.id %}" class="btn btn-sm btn-danger">Decline</a>
+                                        <a href="{% url 'appointment_detail' appointment.id %}" class="btn btn-sm btn-outline-secondary">Details</a>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-calendar-day fa-3x text-muted mb-3"></i>
+                            <p class="mb-0">No pending appointment requests.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-5">
+            <div class="card shadow mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Today's Schedule</h5>
+                    <div class="text-muted">{% now "F j, Y" %}</div>
+                </div>
+                <div class="card-body">
+                    {% with today_appointments=upcoming_appointments|dictsortreversed:"start_time" %}
+                        {% with today_appointments=today_appointments|dictsort:"start_time" %}
+                            {% if today_appointments %}
+                                <div class="list-group">
+                                    {% for appointment in today_appointments %}
+                                        {% if appointment.appointment_date == today %}
+                                            <div class="list-group-item list-group-item-action">
+                                                <div class="d-flex w-100 justify-content-between">
+                                                    <h6 class="mb-1">{{ appointment.patient.user.first_name }} {{ appointment.patient.user.last_name }}</h6>
+                                                    <span class="badge bg-{{ appointment.get_status_badge_class }}">{{ appointment.get_status_display }}</span>
+                                                </div>
+                                                <p class="mb-1">
+                                                    <i class="fas fa-clock me-1"></i> {{ appointment.start_time|time:"g:i A" }} - {{ appointment.end_time|time:"g:i A" }}
+                                                </p>
+                                                <div class="mt-2">
+                                                    <a href="{% url 'appointment_detail' appointment.id %}" class="btn btn-sm btn-outline-primary">View</a>
+                                                    <a href="{% url 'complete_appointment' appointment.id %}" class="btn btn-sm btn-outline-success">Complete</a>
+                                                    <a href="{% url 'start_conversation' 'patient' appointment.patient.id %}" class="btn btn-sm btn-outline-secondary">Message</a>
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <div class="text-center py-4">
+                                    <i class="fas fa-calendar-check fa-3x text-muted mb-3"></i>
+                                    <p class="mb-0">No appointments scheduled for today.</p>
+                                </div>
+                            {% endif %}
+                        {% endwith %}
+                    {% endwith %}
+                </div>
+            </div>
+            
+            <div class="card shadow">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Recent Messages</h5>
+                    <a href="{% url 'inbox' %}" class="btn btn-sm btn-outline-primary">View All</a>
+                </div>
+                <div class="card-body">
+                    {% if doctor.conversations.all %}
+                        <div class="list-group">
+                            {% for conversation in doctor.conversations.all|dictsortreversed:"updated_at"|slice:":3" %}
+                                {% with last_message=conversation.get_last_message %}
+                                    {% if last_message %}
+                                        <a href="{% url 'conversation' conversation.id %}" class="list-group-item list-group-item-action">
+                                            <div class="d-flex w-100 justify-content-between">
+                                                <h6 class="mb-1">{{ conversation.patient.user.first_name }} {{ conversation.patient.user.last_name }}</h6>
+                                                <small>{{ last_message.created_at|date:"M d" }}</small>
+                                            </div>
+                                            <p class="mb-1 text-truncate">{{ last_message.content }}</p>
+                                            {% with unread=conversation.get_unread_count request.user %}
+                                                {% if unread > 0 %}
+                                                    <span class="badge bg-primary rounded-pill">{{ unread }}</span>
+                                                {% endif %}
+                                            {% endwith %}
+                                        </a>
+                                    {% endif %}
+                                {% endwith %}
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-comments fa-3x text-muted mb-3"></i>
+                            <p class="mb-0">No messages yet.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
